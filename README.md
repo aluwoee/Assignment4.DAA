@@ -1,5 +1,5 @@
 README.md — Smart City Scheduling (Assignment 4)
-Project Overview
+# Project Overview
 
 This project implements a modular Java 17 system for analyzing and scheduling directed task graphs in a “Smart City / Smart Campus” scenario.
 It consolidates three main algorithmic topics:
@@ -12,35 +12,43 @@ Shortest / Longest Path analysis in DAGs for critical path estimation.
 
 The implementation follows a performance-driven structure using a unified metrics system to record time and operation counts for each algorithm.
 
-1. Project Structure
-src/
-│
-├── app/
-│   └── MainAnalyzer.java
-│
-├── graphs/
-│   ├── components/
-│   │   ├── StrongCompFinder.java
-│   │   └── CondensedGraph.java
-│   │
-│   ├── sorting/
-│   │   └── TaskSorter.java
-│   │
-│   └── paths/
-│       └── PathPlanner.java
-│
-├── io/
-│   ├── DataReader.java
-│   └── CsvReport.java
-│
-├── util/
-│   ├── Metrics.java
-│   └── MetricsTimer.java
-│
-└── datafactory/
-    └── GraphDatasetBuilder.java
+# 1. Project Structure
+   
+src/ <br>
+├── app/ <br>
+│   └── MainAnalyzer.java   ← Main entry: runs all analyses and writes results <br>
+│ <br>
+├── graphs/ <br>
+│   ├── components/ <br>
+│   │   ├── StrongCompFinder.java   ← Tarjan SCC implementation <br>
+│   │   └── CondensedGraph.java   ← Builds condensation DAG <br>
+│   │ <br>
+│   ├── sorting/ <br>
+│   │   └── TaskSorter.java   ← Kahn’s topological sort with metrics <br>
+│   │ <br>
+│   └── paths/ <br>
+│     └── PathPlanner.java   ← DAG shortest/longest path calculation <br>
+│ <br>
+├── io/ <br>
+│   ├── DataReader.java   ← Reads JSON graph files <br>
+│   └── CsvReport.java   ← Writes results to CSV with Locale.US format <br>
+│ <br>
+├── util/ <br>
+│   ├── Metrics.java   ← Interface for metrics tracking <br>
+│   └── MetricsTimer.java   ← Implementation for timing and operation count <br>
+│ <br>
+└── datafactory/ <br>
+    └── GraphDatasetBuilder.java   ← Random graph dataset generator <br>
 
-2. Dependencies
+## Tests
+
+src/test/java/tests/ <br>
+├── DataReaderIntegrationTest.java   ← Validates JSON loading and data structure <br>
+├── StrongCompFinderTest.java   ← Verifies SCC correctness <br>
+├── TaskSorterTest.java   ← Tests topological sort (acyclic / cyclic) <br>
+└── PathPlannerTest.java   ← Tests DAG shortest and longest path logic <br>
+
+# 3. Dependencies
 
 All dependencies are declared in pom.xml:
 
@@ -53,7 +61,7 @@ Guava 33.1.0-jre – optional utilities.
 Compiler: Java 17
 Build system: Apache Maven 3.11+
 
-3. Modules and Classes
+# 3. Modules and Classes
 Module	Main Classes	Description
 Metrics	Metrics, MetricsTimer	Provides timing and operation-count tracking for each algorithm.
 Graph Input/Output	DataReader, CsvReport	Loads JSON datasets and writes result tables in CSV format.
@@ -62,7 +70,8 @@ Topological Ordering	TaskSorter	Implements Kahn’s algorithm for topological so
 Path Analysis	PathPlanner	Computes both shortest and longest (critical) paths on DAGs.
 Dataset Generator	GraphDatasetBuilder	Produces random weighted graphs of various sizes and densities.
 Main Application	MainAnalyzer	Runs the full workflow: load → analyze → record results.
-4. Execution Workflow
+
+# 4. Execution Workflow
 
 Generate datasets (optional):
 
@@ -82,24 +91,24 @@ data/results/analytics.csv
 Each row contains:
 File, ID, Nodes, Edges, Cyclic, Algorithm, Time(ms), Ops, CriticalLen.
 
-5. Algorithms Summary
-5.1 Strongly Connected Components
+# 5. Algorithms Summary
+## 5.1 Strongly Connected Components
 
 StrongCompFinder uses Tarjan’s DFS-based method to identify SCCs.
 Detected SCCs are passed to CondensedGraph, which compresses the original graph into a DAG of components.
 
-5.2 Condensation DAG + Topological Sort
+## 5.2 Condensation DAG + Topological Sort
 
 CondensedGraph outputs adjacency lists among components;
 TaskSorter applies Kahn’s algorithm to order them linearly.
 Operation counts (queuePush, queuePop) are tracked via MetricsTimer.
 
-5.3 DAG Paths (Shortest / Longest)
+## 5.3 DAG Paths (Shortest / Longest)
 
 PathPlanner implements dynamic programming over topological order to compute path lengths.
 The longest path represents the critical path (maximum cumulative weight).
 
-6. Dataset Generation
+# 6. Dataset Generation
 
 GraphDatasetBuilder generates 9 JSON graphs categorized as follows:
 
@@ -118,7 +127,7 @@ Graphs are stored in /data/ and contain:
   }
 }
 
-7. Testing
+# 7. Testing
 Test Class	Purpose
 SCCFinderTest	Verifies correct SCC detection.
 TopologicalSortTest	Ensures valid topological ordering.
@@ -128,7 +137,7 @@ Run all tests:
 
 mvn test
 
-8. Empirical Validation
+# 8. Empirical Validation
 
 Empirical validation in this project is implemented directly inside the algorithms through the metrics system (Metrics / MetricsTimer).
 Every key algorithm (SCC, Topological Sort, and Path Planner) starts and stops a timer around its main execution block and records how many operations were performed.
@@ -164,7 +173,7 @@ Thus, the CSV output serves as empirical performance evidence, showing real meas
 This is my empirical validation:
 i can measure, record, and analyze the actual time and operations for each algorithm — not just theoretically, but with experimental data.
 
-9. Experimental Results (Empirical Data & Visualization)
+# 9. Experimental Results (Empirical Data & Visualization)
 
 | Category | File | Nodes | Edges | Cyclic | SCC Time | Topo Time | DAG Time | Critical Path |
 |-----------|------|--------|--------|---------|-----------|------------|-----------|----------------|
@@ -188,7 +197,7 @@ as the number of edges increases, computation time and operation count grow line
 
 <img width="1235" height="488" alt="image" src="https://github.com/user-attachments/assets/31d03554-d4ea-40e6-ab5d-3d7474402c50" />
 
-10. Performance Discussion
+# 10. Performance Discussion
 
 Trends observed:
 
@@ -207,17 +216,21 @@ O(V + E) scaling for SCC and Topo.
 
 DP-based path analysis proportional to edge density.
 
-11. Run Instructions
-   # Generate datasets
-mvn exec:java -Dexec.mainClass="datafactory.GraphDatasetBuilder"
+# 11. Run Instructions
+ > How to build, test, and run the project
 
-# Analyze datasets
-mvn exec:java -Dexec.mainClass="app.MainAnalyzer"
+### Using Maven (Recommended)
 
-# Run tests
+### Clean and compile the project
+mvn clean compile
+
+### Run the main application
+mvn exec:java -Dexec.mainClass="app.AppMain"
+
+### Run all JUnit tests
 mvn test
 
-13. Conclusion
+# 13. Conclusion
 
 This project demonstrates the integration of core graph algorithms in a clean and modular Java framework. It includes implementations for SCC detection (Tarjan), Condensation graph construction, Topological Sorting (Kahn), and Longest Path analysis for DAGs.
 
